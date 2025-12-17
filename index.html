@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dynamic SAB Gen</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Smart App Banner (injected on reload) -->
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const appId = params.get("appId");
+      const appArgument = params.get("appArgument");
+
+      if (appId) {
+        const meta = document.createElement("meta");
+        meta.name = "apple-itunes-app";
+        meta.content = `app-id=${appId}` + (appArgument ? `, app-argument=${appArgument}` : "");
+        document.head.appendChild(meta);
+      }
+    })();
+  </script>
+
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f5f5f7;
+      padding: 32px;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 12px;
+      font-size: 16px;
+    }
+
+    button {
+      background: #007aff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>SAP GEN</h1>
+  <p>Paste Apple App Store link below:</p>
+
+  <input
+    id="appStoreUrl"
+    type="url"
+    placeholder="https://apps.apple.com/de/app/appname/id985746746"
+  />
+
+  <button onclick="applySmartBanner()">Apply Smart App Banner</button>
+
+  <script>
+    function applySmartBanner() {
+      const url = document.getElementById("appStoreUrl").value.trim();
+
+      if (!url) {
+        alert("Please paste an App Store URL");
+        return;
+      }
+
+      try {
+        const parsedUrl = new URL(url);
+
+        // Extract App ID
+        const appIdMatch = parsedUrl.pathname.match(/id(\d+)/);
+        if (!appIdMatch) {
+          alert("Invalid App Store link");
+          return;
+        }
+
+        const appId = appIdMatch[1];
+
+        // Use current page as app-argument (can be customized)
+        const appArgument = encodeURIComponent(window.location.origin);
+
+        // Reload page with parameters
+        const newUrl =
+          `${window.location.pathname}?appId=${appId}&appArgument=${appArgument}`;
+
+        window.location.href = newUrl;
+
+      } catch (e) {
+        alert("Invalid URL format");
+      }
+    }
+  </script>
+</body>
+</html>
