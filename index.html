@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Dynamic SAB Gen</title>
+  <title>Smart App Banner Generator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Smart App Banner (injected on reload) -->
@@ -15,49 +15,146 @@
       if (appId) {
         const meta = document.createElement("meta");
         meta.name = "apple-itunes-app";
-        meta.content = `app-id=${appId}` + (appArgument ? `, app-argument=${appArgument}` : "");
+        meta.content =
+          `app-id=${appId}` +
+          (appArgument ? `, app-argument=${appArgument}` : "");
         document.head.appendChild(meta);
       }
     })();
   </script>
 
   <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #f5f5f7;
-      padding: 32px;
-      max-width: 600px;
-      margin: auto;
+    :root {
+      --primary: #007aff;
+      --secondary: #e5e5ea;
+      --background: #f5f5f7;
+      --card-bg: #ffffff;
+      --text: #1c1c1e;
+      --subtle: #6e6e73;
+      --radius: 14px;
     }
 
-    input, button {
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--background);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
       width: 100%;
-      padding: 14px;
-      margin-top: 12px;
+      max-width: 520px;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.08),
+        0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    h1 {
+      font-size: 26px;
+      margin: 0 0 8px;
+    }
+
+    p {
+      margin: 0 0 20px;
+      color: var(--subtle);
+      line-height: 1.5;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 16px;
       font-size: 16px;
+      border-radius: 10px;
+      border: 1px solid var(--secondary);
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+    }
+
+    .button-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 18px;
     }
 
     button {
-      background: #007aff;
-      color: white;
+      flex: 1;
+      padding: 14px 16px;
+      font-size: 16px;
+      border-radius: 10px;
       border: none;
-      border-radius: 8px;
       cursor: pointer;
+      font-weight: 500;
+      transition: transform 0.05s ease, opacity 0.15s ease;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .secondary {
+      background: var(--secondary);
+      color: var(--text);
+    }
+
+    footer {
+      margin-top: 18px;
+      font-size: 13px;
+      color: var(--subtle);
+      text-align: center;
     }
   </style>
 </head>
 
 <body>
-  <h1>SAP GEN</h1>
-  <p>Paste Apple App Store link below:</p>
+  <div class="card">
+    <h1>Smart App Banner</h1>
+    <p>
+      Paste an Apple App Store link to generate a dynamic Smart App Banner
+      for this page.
+    </p>
 
-  <input
-    id="appStoreUrl"
-    type="url"
-    placeholder="https://apps.apple.com/de/app/appname/id985746746"
-  />
+    <input
+      id="appStoreUrl"
+      type="url"
+      placeholder="https://apps.apple.com/de/app/discord/id985746746"
+    />
 
-  <button onclick="applySmartBanner()">Apply Smart App Banner</button>
+    <div class="button-row">
+      <button class="primary" onclick="applySmartBanner()">
+        Apply Smart App Banner
+      </button>
+
+      <button
+        class="secondary"
+        onclick="openAppStore()">
+        Open App Store
+      </button>
+    </div>
+
+    <footer>
+      Works best on iOS Safari
+    </footer>
+  </div>
 
   <script>
     function applySmartBanner() {
@@ -80,18 +177,20 @@
 
         const appId = appIdMatch[1];
 
-        // Use current page as app-argument (can be customized)
+        // Use current page as app-argument
         const appArgument = encodeURIComponent(window.location.origin);
 
-        // Reload page with parameters
         const newUrl =
           `${window.location.pathname}?appId=${appId}&appArgument=${appArgument}`;
 
         window.location.href = newUrl;
-
       } catch (e) {
         alert("Invalid URL format");
       }
+    }
+
+    function openAppStore() {
+      window.open("https://apps.apple.com", "_blank", "noopener,noreferrer");
     }
   </script>
 </body>
